@@ -32,9 +32,6 @@ outputs, states = tf.nn.dynamic_rnn(cell, X, dtype=tf.float32)
 # 결괏값을 원-핫 인코딩으로 구현, 손실함수로 tf.nn.softmax_cross_entropy_with_logits 사용
 # tf.nn.softmax_cross_entropy_with_logits 는 최종결괏값이 실측값과 동일한 형태인 [batch_size, n_class]여야 함
 
-W = tf.Variable(tf.random_normal([n_hidden, n_class]))      # 가중치
-b = tf.Variable(tf.random_normal([n_class]))                # 편향
-
 # n_step과 batch_size 차원의 순서 바꿈
 outputs = tf.transpose(outputs, [1, 0, 2])
 # n_step차원 제거하고 마지막 결괏값만 수용
