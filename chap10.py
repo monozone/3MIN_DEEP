@@ -19,6 +19,7 @@ n_hidden = 128                      # 은닉층의 뉴런 갯수
 n_class = 10
 
 # 입력값
+# RNN은 순서가 있는 데이터를 다루므로 한번에 입력받을 갯수와 총 몇단계로 이루어진 데이터를 받을지 결정해야 함
 X = tf.placeholder(tf.float32, [None, n_step, n_input])
 # 출력값
 Y = tf.placeholder(tf.float32, [None, n_class])
@@ -27,19 +28,25 @@ W = tf.Variable(tf.random_normal([n_hidden, n_class]))
 # 편향
 b = tf.Variable(tf.random_normal([n_class]))
 
-# RNN셀 생성
+# n_hidden개의 출력값을 갖는 RNN셀 생성
 cell = tf.nn.rnn_cell.BasicRNNCell(n_hidden)
 
 # RNN 신경망 완료
 outputs, states = tf.nn.dynamic_rnn(cell, X, dtype=tf.float32)
+# -> [batch_size, n_step, n_hidden]
+
 
 # 결괏값을 원-핫 인코딩으로 구현, 손실함수로 tf.nn.softmax_cross_entropy_with_logits 사용
 # tf.nn.softmax_cross_entropy_with_logits 는 최종결괏값이 실측값과 동일한 형태인 [batch_size, n_class]여야 함
 
 # n_step과 batch_size 차원의 순서 바꿈
 outputs = tf.transpose(outputs, [1, 0, 2])
+# -> [n_step, batch_size, n_hidden]
+
 # n_step차원 제거하고 마지막 결괏값만 수용
 outputs = outputs[-1]
+# -> [batch_size, n_hidden]
+
 
 # 최종 결괏값 계산
 model = tf.matmul(outputs, W) + b
@@ -60,7 +67,7 @@ for epoch in range(total_epoch):
 
     for i in range(total_batch):
         batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-        batch_xs = batch_xs.reshape((batch_size, n_step, n_input))
+        batch_xs = batch_xs.reshape((batch_size, n_step, n_input))      # 입력값과 같도록 재배치
 
         _, cost_val = sess.run([optimizer, cost], feed_dict={X: batch_xs, Y: batch_ys})
         total_cost += cost_val
