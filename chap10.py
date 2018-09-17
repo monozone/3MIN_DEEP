@@ -89,3 +89,5 @@ print('정확도:', sess.run(accuracy, feed_dict={X: test_xs, Y: test_ys}))
 
 
 # 집 구동 시간   :
+# 276.38274025917053
+# 259.08171582221985
