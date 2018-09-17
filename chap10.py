@@ -1,9 +1,13 @@
 # -*- coding:utf-8 -*-
 
 import tensorflow as tf
-
+import time
 from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets('./mnist/data/', one_hot=True)
+
+
+start = time.time()
+
 
 learning_rate = 0.001               # 학습률
 total_epoch = 30                    # 학습할 총 횟수
@@ -69,8 +73,19 @@ print('최적화 완료')
 is_correct = tf.equal(tf.argmax(model, 1), tf.argmax(Y, 1))
 accuracy = tf.reduce_mean(tf.cast(is_correct, tf.float32))
 
+end = time.time() - start
+print(end)
+
 test_batch_size = len(mnist.test.images)
 test_xs = mnist.images.reshape(test_batch_size, n_step, n_input)
 test_ys = mnist.test.labels
 
 print('정확도:', sess.run(accuracy, feed_dict={X: test_xs, Y: test_ys}))
+
+
+# 회사 구동 시간 :
+# 173.0208613872528
+# 175.8797698020935
+
+
+# 집 구동 시간   :
